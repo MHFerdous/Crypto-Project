@@ -1,7 +1,19 @@
+import 'package:crypto_project/screens/auth/sign_up_screen.dart';
 import 'package:crypto_project/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() => runApp(CipherApp());
+Future<void> main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://pwnvemfifyatnytaerrq.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3bnZlbWZpZnlhdG55dGFlcnJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg1NzUyNzIsImV4cCI6MjA1NDE1MTI3Mn0.EK9hzWvOlBMBLL0-R2YEGAXfRTSDq-jPl_XeDpMKRUE',
+  );
+
+ runApp(CipherApp());
+}
 
 class CipherApp extends StatelessWidget {
   const CipherApp({super.key});
@@ -15,7 +27,7 @@ class CipherApp extends StatelessWidget {
         primaryColor: Colors.deepPurple,
         textTheme: TextTheme(bodyMedium: TextStyle(color: Colors.white)),
       ),
-      home: HomeScreen(),
+      home: SignupScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
