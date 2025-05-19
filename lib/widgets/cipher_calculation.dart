@@ -3,6 +3,7 @@ import 'dart:math';
 
 const String charset =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 !@#\$%^&*()-_=+[]{}|;:'\",.<>?/\\`~\n\t\r";
+const String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 String cleanUnsupported(String text) {
   return text.split('').where((c) => charset.contains(c)).join();
@@ -105,4 +106,139 @@ String caesarEncrypt(String text, int shift) {
 
 String caesarDecrypt(String cipher, int shift) {
   return caesarEncrypt(cipher, -shift % 95);
+}
+
+// Hill Cipher Implementation
+
+List<int> textToNumbers(String text, String charset) {
+  return text.split('').map((c) => charset.indexOf(c)).toList();
+}
+
+String numbersToText(List<int> numbers, String charset) {
+  return numbers.map((n) => charset[n % charset.length]).join();
+}
+
+int modInverse(int a, int m) {
+  a = a % m;
+  for (int x = 1; x < m; x++) {
+    if ((a * x) % m == 1) return x;
+  }
+  throw Exception("Modular inverse does not exist.");
+}
+
+List<List<int>> matrixModInverse(List<List<int>> matrix, int modulus) {
+  int n = matrix.length;
+  int det = determinant(matrix) % modulus;
+  if (det == 0) throw Exception("Matrix is not invertible.");
+  int detInv = modInverse(det, modulus);
+  List<List<int>> adj = adjugate(matrix);
+  return List.generate(n, (i) {
+    return List.generate(n, (j) {
+      return (adj[i][j] * detInv) % modulus;
+    });
+  });
+}
+
+int determinant(List<List<int>> matrix) {
+  int n = matrix.length;
+  if (n == 2) {
+    return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+  } else if (n == 3) {
+    int a = matrix[0][0],
+        b = matrix[0][1],
+        c = matrix[0][2],
+        d = matrix[1][0],
+        e = matrix[1][1],
+        f = matrix[1][2],
+        g = matrix[2][0],
+        h = matrix[2][1],
+        i = matrix[2][2];
+    return a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
+  } else {
+    throw Exception("Only 2x2 and 3x3 matrices are supported.");
+  }
+}
+
+List<List<int>> adjugate(List<List<int>> matrix) {
+  int n = matrix.length;
+  if (n == 2) {
+    return [
+      [matrix[1][1], -matrix[0][1]],
+      [-matrix[1][0], matrix[0][0]],
+    ];
+  } else if (n == 3) {
+    List<List<int>> adj = List.generate(3, (_) => List.filled(3, 0));
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        List<List<int>> minor = [];
+        for (int k = 0; k < 3; k++) {
+          if (k == i) continue;
+          List<int> row = [];
+          for (int l = 0; l < 3; l++) {
+            if (l == j) continue;
+            row.add(matrix[k][l]);
+          }
+          minor.add(row);
+        }
+        int det = minor[0][0] * minor[1][1] - minor[0][1] * minor[1][0];
+        adj[j][i] = ((i + j) % 2 == 0 ? 1 : -1) * det;
+      }
+    }
+    return adj;
+  } else {
+    throw Exception("Only 2x2 and 3x3 matrices are supported.");
+  }
+}
+
+String hillProcess(
+  String text,
+  String keyText,
+  String mode,
+  int size,
+  String charset,
+) {
+  int modulus = charset.length;
+  if (charset == alphabet) {
+    text = text.toUpperCase();
+    keyText = keyText.toUpperCase();
+  }
+  text = text.split('').where((c) => charset.contains(c)).join();
+  int n = size;
+  List<int> keyNums = textToNumbers(keyText, charset);
+  if (keyNums.length != n * n) {
+    throw Exception("Key must form a square matrix.");
+  }
+  List<List<int>> keyMatrix = List.generate(n, (i) {
+    return List.generate(n, (j) => keyNums[i * n + j]);
+  });
+  if (text.length % n != 0) {
+    text += charset[0] * (n - text.length % n);
+  }
+  List<String> chunks = [];
+  for (int i = 0; i < text.length; i += n) {
+    chunks.add(text.substring(i, i + n));
+  }
+  String result = '';
+  if (mode == 'decrypt') {
+    keyMatrix = matrixModInverse(keyMatrix, modulus);
+  }
+  for (String chunk in chunks) {
+    List<int> vec = textToNumbers(chunk, charset);
+    List<int> res = List.filled(n, 0);
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < n; j++) {
+        res[i] += keyMatrix[i][j] * vec[j];
+      }
+      res[i] %= modulus;
+    }
+    result += numbersToText(res, charset);
+  }
+  return result;
+}
+String hillEncrypt(String plaintext, String keyText, int matrixSize) {
+  return hillProcess(plaintext, keyText, 'encrypt', matrixSize, alphabet);
+}
+
+String hillDecrypt(String ciphertext, String keyText, int matrixSize) {
+  return hillProcess(ciphertext, keyText, 'decrypt', matrixSize, alphabet);
 }

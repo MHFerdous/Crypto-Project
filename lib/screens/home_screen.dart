@@ -1,4 +1,8 @@
+import 'package:crypto_project/widgets/caesar_cipher_widget.dart';
 import 'package:crypto_project/widgets/cipher_calculation.dart';
+import 'package:crypto_project/widgets/hill_cipher_widget.dart';
+import 'package:crypto_project/widgets/rail_fence_cipher_widget.dart';
+import 'package:crypto_project/widgets/vernam_cipher_widget.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -9,23 +13,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String selectedCipher = 'Vernam Cipher';
+  String selectedCipher = 'Rail Fence Cipher';
   final List<String> ciphers = [
-    'Vernam Cipher',
     'Rail Fence Cipher',
-    'Caesar Cipher',
     'Hill Cipher',
+    'Caesar Cipher',
+    'Vernam Cipher',
   ];
+
+  final List<String> hillTypes = ['Classic Hill Cipher (A-Z only)'];
+  final String _selectedMatrixSize = '2x2';
+
+  final List<String> _matrixSizes = ['2x2', '3x3'];
 
   final TextEditingController _inputController = TextEditingController();
   final TextEditingController _keyController = TextEditingController();
-  final List<TextEditingController> _matrixControllers = List.generate(
-    9,
-    (_) => TextEditingController(),
-  );
 
-  int _shift = 3;
-  int _rails = 2;
+  final int _shift = 3;
+  final int _rails = 2;
   bool _isEncrypt = true;
   String _result = '';
 
@@ -33,9 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _inputController.dispose();
     _keyController.dispose();
-    for (var controller in _matrixControllers) {
-      controller.dispose();
-    }
     super.dispose();
   }
 
@@ -49,71 +51,68 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       backgroundColor: Color(0xFF121212),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(24),
-        child: DefaultTextStyle(
-          style: TextStyle(color: Colors.white),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 8),
-              Text(
-                '✨ $selectedCipher',
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 24),
-              Text('Action'),
-              Row(
-                children: [
-                  Radio(
-                    value: true,
-                    groupValue: _isEncrypt,
-                    onChanged: (val) => setState(() => _isEncrypt = val!),
-                  ),
-                  Text('Encrypt'),
-                  Radio(
-                    value: false,
-                    groupValue: _isEncrypt,
-                    onChanged: (val) => setState(() => _isEncrypt = val!),
-                  ),
-                  Text('Decrypt'),
-                ],
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _inputController,
-                style: TextStyle(color: Colors.white),
-                maxLines: 4,
-                decoration: InputDecoration(
-                  labelText:
-                      _isEncrypt
-                          ? 'Enter Plaintext'
-                          : (selectedCipher == 'Vernam Cipher'
-                              ? 'Encrypted (Base64)'
-                              : 'Enter Ciphertext'),
-                  labelStyle: TextStyle(color: Colors.white70),
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Color(0xFF2C2C3E),
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 8),
+            Text(
+              '✨ $selectedCipher',
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+            Text('Action'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Radio(
+                  value: true,
+                  groupValue: _isEncrypt,
+                  onChanged: (val) => setState(() => _isEncrypt = val!),
                 ),
-              ),
-              const SizedBox(height: 16),
-              _buildCipherSpecificInputs(),
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: _process,
-                icon: Icon(Icons.lock),
-                label: Text(_isEncrypt ? 'Encrypt' : 'Decrypt'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
+                Text('Encrypt'),
+                Radio(
+                  value: false,
+                  groupValue: _isEncrypt,
+                  onChanged: (val) => setState(() => _isEncrypt = val!),
                 ),
+                Text('Decrypt'),
+              ],
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _inputController,
+              style: TextStyle(color: Colors.white),
+              maxLines: 4,
+              decoration: InputDecoration(
+                labelText:
+                    _isEncrypt
+                        ? 'Enter Plaintext'
+                        : (selectedCipher == 'Vernam Cipher'
+                            ? 'Encrypted (Base64)'
+                            : 'Enter Ciphertext'),
+                labelStyle: TextStyle(color: Colors.white70),
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Color(0xFF2C2C3E),
               ),
-              const SizedBox(height: 32),
-              SelectableText(
-                _result,
-                style: TextStyle(color: Colors.greenAccent),
+            ),
+            const SizedBox(height: 16),
+            _buildCipherSpecificInputs(),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () {
+                _buildCipherSpecificOutputs();
+              },
+              icon: Icon(_isEncrypt ? Icons.lock : Icons.lock_open),
+              label: Text(_isEncrypt ? 'Encrypt' : 'Decrypt'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
               ),
-            ],
-          ),
+            ),
+            SizedBox(height: 32),
+            SelectableText(_result, style: TextStyle(color: Colors.white)),
+          ],
         ),
       ),
     );
@@ -121,100 +120,133 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildCipherSpecificInputs() {
     switch (selectedCipher) {
-      case 'Caesar Cipher':
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Shift Amount:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.remove),
-                  onPressed: () {
-                    if (_shift > 1) setState(() => _shift--);
-                  },
-                ),
-                Text('$_shift'),
-                IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () {
-                    if (_shift < 25) setState(() => _shift++);
-                  },
-                ),
-              ],
-            ),
-          ],
-        );
       case 'Rail Fence Cipher':
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Number of Rails:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.remove),
-                  onPressed: () {
-                    if (_rails > 2) setState(() => _rails--);
-                  },
-                ),
-                Text('$_rails'),
-                IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () {
-                    if (_rails < 10) setState(() => _rails++);
-                  },
-                ),
-              ],
-            ),
-          ],
-        );
-      case 'Vernam Cipher':
-        if (!_isEncrypt) {
-          return TextField(
-            controller: _keyController,
-            decoration: InputDecoration(labelText: 'Key (Base64)'),
-          );
-        }
-        return SizedBox.shrink();
+        return RailFenceCipherWidget(rails: _rails);
+
       case 'Hill Cipher':
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Key Matrix (3x3):',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            GridView.count(
-              crossAxisCount: 3,
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              children: List.generate(9, (index) {
-                return Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: TextField(
-                    controller: _matrixControllers[index],
-                    keyboardType: TextInputType.number,
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Color(0xFF2C2C3E),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ],
+        return HillCipherWidget(
+          selectedMatrixSize: _selectedMatrixSize,
+          matrixSizes: _matrixSizes,
+          keyController: _keyController,
         );
+
+      case 'Caesar Cipher':
+        return CaesarCipherWidget(shift: _shift);
+
+      case 'Vernam Cipher':
+        return VernamCipherWidget(
+          isEncrypt: _isEncrypt,
+          keyController: _keyController,
+        );
+
       default:
         return SizedBox.shrink();
+    }
+  }
+
+  void _buildCipherSpecificOutputs() {
+    switch (selectedCipher) {
+      case 'Rail Fence Cipher':
+        return _railFenceOutput();
+
+      case 'Hill Cipher':
+        return _hillCipherOutput();
+
+      case 'Caesar Cipher':
+        return _caesarOutput();
+
+      case 'Vernam Cipher':
+        return _vernamOutput();
+    }
+  }
+
+  void _railFenceOutput() {
+    try {
+      String output =
+          _isEncrypt
+              ? encryptRailFence(_inputController.text, _rails)
+              : decryptRailFence(_inputController.text, _rails);
+      setState(() {
+        _result = _isEncrypt ? 'Encrypted: $output' : 'Decrypted: $output';
+      });
+    } catch (e) {
+      setState(() {
+        _result = 'Error: ${e.toString()}';
+      });
+    }
+  }
+
+  void _hillCipherOutput() {
+    try {
+      int matrixSize = _selectedMatrixSize == '2x2' ? 2 : 3;
+
+      String output =
+          _isEncrypt
+              ? hillEncrypt(
+                _inputController.text,
+                _keyController.text,
+                matrixSize,
+              )
+              : hillDecrypt(
+                _inputController.text,
+                _keyController.text,
+                matrixSize,
+              );
+
+      setState(() {
+        _result = _isEncrypt ? 'Encrypted: $output' : 'Decrypted: $output';
+      });
+    } catch (e) {
+      setState(() {
+        _result = 'Error: ${e.toString()}';
+      });
+    }
+
+    setState(() {});
+  }
+
+  void _caesarOutput() {
+    try {
+      String output =
+          _isEncrypt
+              ? caesarEncrypt(_inputController.text, _shift)
+              : caesarDecrypt(_inputController.text, _shift);
+      setState(() {
+        _result = _isEncrypt ? 'Encrypted: $output' : 'Decrypted: $output';
+      });
+    } catch (e) {
+      setState(() {
+        _result = 'Error: ${e.toString()}';
+      });
+    }
+  }
+
+  void _vernamOutput() {
+    try {
+      if (_isEncrypt) {
+        _inputController.text = cleanUnsupported(_inputController.text);
+        _keyController.text = generateKey(_inputController.text.length);
+        String encrypted = vernamEncrypt(
+          _inputController.text,
+          _keyController.text,
+        );
+        setState(() {
+          _result =
+              'Encrypted: ${encodeBase64(encrypted)}\nKey: ${encodeBase64(_keyController.text)}';
+        });
+      } else {
+        String decrypted = vernamDecrypt(
+          decodeBase64(_inputController.text),
+          decodeBase64(_keyController.text),
+        );
+        setState(() {
+          _result = 'Decrypted: $decrypted';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _result = 'Error: ${e.toString()}';
+      });
     }
   }
 
@@ -245,7 +277,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     selectedCipher = value!;
                     _inputController.clear();
                     _keyController.clear();
-                    _result = '';
+                    //_result = '';
                   });
                   Navigator.pop(context);
                 },
@@ -260,63 +292,5 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-  }
-
-  void _process() {
-    String input = _inputController.text;
-
-    try {
-      String output = '';
-      switch (selectedCipher) {
-        case 'Vernam Cipher':
-          if (_isEncrypt) {
-            String cleanInput = cleanUnsupported(input);
-            String key = generateKey(cleanInput.length);
-            String encrypted = vernamEncrypt(cleanInput, key);
-            _result =
-                'Encrypted: ${encodeBase64(encrypted)}\nKey: ${encodeBase64(key)}';
-          } else {
-            String decodedInput = decodeBase64(input);
-            String decodedKey = decodeBase64(_keyController.text);
-            String decrypted = vernamDecrypt(decodedInput, decodedKey);
-            _result = 'Decrypted: $decrypted';
-          }
-          break;
-        case 'Caesar Cipher':
-          output =
-              _isEncrypt
-                  ? caesarEncrypt(input, _shift)
-                  : caesarDecrypt(input, _shift);
-          _result = _isEncrypt ? 'Encrypted: $output' : 'Decrypted: $output';
-          break;
-        case 'Rail Fence Cipher':
-          output =
-              _isEncrypt
-                  ? encryptRailFence(input, _rails)
-                  : decryptRailFence(input, _rails);
-          _result = _isEncrypt ? 'Encrypted: $output' : 'Decrypted: $output';
-          break;
-        case 'Hill Cipher':
-          List<List<int>> keyMatrix = List.generate(
-            3,
-            (i) => List.generate(3, (j) {
-              int val = int.tryParse(_matrixControllers[i * 3 + j].text) ?? 0;
-              return val;
-            }),
-          );
-          /*if (_isEncrypt) {
-            output = hillEncrypt(input, keyMatrix);
-            _result = 'Encrypted: $output';
-          } else {
-            output = hillDecrypt(input, keyMatrix);
-            _result = 'Decrypted: $output';
-          }*/
-          break;
-      }
-    } catch (e) {
-      _result = 'Error: ${e.toString()}';
-    }
-
-    setState(() {});
   }
 }

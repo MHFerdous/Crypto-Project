@@ -1,4 +1,4 @@
-import 'package:crypto_project/screens/home_screen.dart';
+import 'package:crypto_project/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(CipherApp());
@@ -11,11 +11,11 @@ class CipherApp extends StatelessWidget {
     return MaterialApp(
       title: 'Cipher Tools',
       theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Color(0xFF121218),
+        scaffoldBackgroundColor: Color(0xFF1E1E2C),
         primaryColor: Colors.deepPurple,
         textTheme: TextTheme(bodyMedium: TextStyle(color: Colors.white)),
       ),
-      home: HomeScreen(),
+      home: SplashScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
