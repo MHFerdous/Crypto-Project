@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -6,8 +7,6 @@ class LoginScreen extends StatelessWidget {
   final _passwordController = TextEditingController();
 
   void _login(BuildContext context) async {
-
-
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
@@ -24,8 +23,8 @@ class LoginScreen extends StatelessWidget {
     if (!passwordRegex.hasMatch(password)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(
-                'Password must be at least 6 characters and contain both letters and numbers')),
+          content: Text('Password must be at least 6 characters and contain both letters and numbers'),
+        ),
       );
       return;
     }
@@ -35,15 +34,25 @@ class LoginScreen extends StatelessWidget {
           .signInWithPassword(email: email, password: password);
       final user = response.user;
 
-      if (user != null) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Login successful')));
+      if (user != null && response.session != null) {
+        // Save token using SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('supabase_token', response.session!.accessToken);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login successful')),
+        );
+
+        // Navigate to home or dashboard
+        // Navigator.pushReplacement(...);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Login failed: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login failed: $e')),
+      );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

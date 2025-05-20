@@ -1,6 +1,8 @@
+import 'package:crypto_project/screens/auth/login_screen.dart';
 import 'package:crypto_project/screens/auth/sign_up_screen.dart';
 import 'package:crypto_project/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
@@ -18,6 +20,12 @@ Future<void> main() async {
 class CipherApp extends StatelessWidget {
   const CipherApp({super.key});
 
+  Future<bool> checkToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('supabase_token');
+    return token != null && token.isNotEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -27,7 +35,20 @@ class CipherApp extends StatelessWidget {
         primaryColor: Colors.deepPurple,
         textTheme: TextTheme(bodyMedium: TextStyle(color: Colors.white)),
       ),
-      home: SignupScreen(),
+      home: FutureBuilder<bool>(
+        future: checkToken(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasData && snapshot.data == true) {
+            // return SignupScreen(); return here your landing page
+          } else {
+            return LoginScreen();
+          }
+        },
+      ),
       debugShowCheckedModeBanner: false,
     );
   }
