@@ -35,7 +35,7 @@ class LoginScreen extends StatelessWidget {
       final user = response.user;
 
       if (user != null && response.session != null) {
-        // Save token using SharedPreferences
+
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('supabase_token', response.session!.accessToken);
 
@@ -43,8 +43,6 @@ class LoginScreen extends StatelessWidget {
           SnackBar(content: Text('Login successful')),
         );
 
-        // Navigate to home or dashboard
-        // Navigator.pushReplacement(...);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
