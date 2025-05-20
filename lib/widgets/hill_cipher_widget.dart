@@ -17,41 +17,51 @@ class HillCipherWidget extends StatefulWidget {
 }
 
 class _HillCipherWidgetState extends State<HillCipherWidget> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Matrix Size', style: TextStyle(color: Colors.white70)),
-        SizedBox(height: 4),
-        DropdownButtonFormField<String>(
-          value: widget.selectedMatrixSize,
-          items:
-              widget.matrixSizes.map((e) {
-                return DropdownMenuItem(value: e, child: Text(e));
-              }).toList(),
-          onChanged:
-              (value) => setState(() => widget.selectedMatrixSize = value!),
-          dropdownColor: Color(0xFF2C2C3E),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Color(0xFF2C2C3E),
-            border: OutlineInputBorder(),
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Matrix Size', style: TextStyle(color: Colors.white70)),
+          SizedBox(height: 4),
+          DropdownButtonFormField<String>(
+            value: widget.selectedMatrixSize,
+            items:
+                widget.matrixSizes.map((e) {
+                  return DropdownMenuItem(value: e, child: Text(e));
+                }).toList(),
+            onChanged:
+                (value) => setState(() => widget.selectedMatrixSize = value!),
+            dropdownColor: Color(0xFF2C2C3E),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Color(0xFF2C2C3E),
+              border: OutlineInputBorder(),
+            ),
           ),
-        ),
-        SizedBox(height: 16),
-        TextField(
-          controller: widget.keyController,
-          style: TextStyle(color: Colors.white),
-          decoration: InputDecoration(
-            labelText: 'Key',
-            labelStyle: TextStyle(color: Colors.white70),
-            border: OutlineInputBorder(),
-            filled: true,
-            fillColor: Color(0xFF2C2C3E),
+          SizedBox(height: 16),
+          TextFormField(
+            controller: widget.keyController,
+            style: TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              labelText: 'Key',
+              labelStyle: TextStyle(color: Colors.white70),
+              border: OutlineInputBorder(),
+              filled: true,
+              fillColor: Color(0xFF2C2C3E),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Enter Key';
+              }
+              return null;
+            },
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

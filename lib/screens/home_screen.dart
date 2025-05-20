@@ -28,11 +28,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final TextEditingController _inputController = TextEditingController();
   final TextEditingController _keyController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final int _shift = 3;
   final int _rails = 2;
   bool _isEncrypt = true;
   String _result = '';
+  bool _showResult = false;
 
   @override
   void dispose() {
@@ -52,67 +54,88 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Color(0xFF121212),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 8),
-            Text(
-              '✨ $selectedCipher',
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 24),
-            Text('Action'),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Radio(
-                  value: true,
-                  groupValue: _isEncrypt,
-                  onChanged: (val) => setState(() => _isEncrypt = val!),
-                ),
-                Text('Encrypt'),
-                Radio(
-                  value: false,
-                  groupValue: _isEncrypt,
-                  onChanged: (val) => setState(() => _isEncrypt = val!),
-                ),
-                Text('Decrypt'),
-              ],
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _inputController,
-              style: TextStyle(color: Colors.white),
-              maxLines: 4,
-              decoration: InputDecoration(
-                labelText:
-                    _isEncrypt
-                        ? 'Enter Plaintext'
-                        : (selectedCipher == 'Vernam Cipher'
-                            ? 'Encrypted (Base64)'
-                            : 'Enter Ciphertext'),
-                labelStyle: TextStyle(color: Colors.white70),
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: Color(0xFF2C2C3E),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 8),
+              Text(
+                '✨ $selectedCipher',
+                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(height: 16),
-            _buildCipherSpecificInputs(),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: () {
-                _buildCipherSpecificOutputs();
-              },
-              icon: Icon(_isEncrypt ? Icons.lock : Icons.lock_open),
-              label: Text(_isEncrypt ? 'Encrypt' : 'Decrypt'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
+              const SizedBox(height: 24),
+              Text('Action'),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Radio(
+                    value: true,
+                    groupValue: _isEncrypt,
+                    onChanged: (val) => setState(() => _isEncrypt = val!),
+                  ),
+                  Text('Encrypt'),
+                  Radio(
+                    value: false,
+                    groupValue: _isEncrypt,
+                    onChanged: (val) => setState(() => _isEncrypt = val!),
+                  ),
+                  Text('Decrypt'),
+                ],
               ),
-            ),
-            SizedBox(height: 32),
-            SelectableText(_result, style: TextStyle(color: Colors.white)),
-          ],
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _inputController,
+                style: TextStyle(color: Colors.white),
+                maxLines: 4,
+                decoration: InputDecoration(
+                  labelText:
+                      _isEncrypt
+                          ? 'Enter Plaintext'
+                          : (selectedCipher == 'Vernam Cipher'
+                              ? 'Encrypted (Base64)'
+                              : 'Enter Ciphertext'),
+                  labelStyle: TextStyle(color: Colors.white70),
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Color(0xFF2C2C3E),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Enter Text';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              _buildCipherSpecificInputs(),
+
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _buildCipherSpecificOutputs();
+                    _showResult = true;
+                    ResultWidget(result: _result);
+                  }
+                },
+                icon: Icon(_isEncrypt ? Icons.lock : Icons.lock_open),
+                label: Text(_isEncrypt ? 'Encrypt' : 'Decrypt'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                ),
+              ),
+              SizedBox(height: 32),
+              Visibility(
+                visible: _showResult,
+                child: SelectableText(
+                  _result,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -126,8 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 'Hill Cipher':
         return HillCipherWidget(
           selectedMatrixSize: _selectedMatrixSize,
-          matrixSizes: _matrixSizes,
-          keyController: _keyController,
+          matrixSizes: _matrixSizes, keyController: _keyController,
         );
 
       case 'Caesar Cipher':
@@ -277,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     selectedCipher = value!;
                     _inputController.clear();
                     _keyController.clear();
-                    //_result = '';
+                    _showResult = false;
                   });
                   Navigator.pop(context);
                 },
@@ -291,6 +313,22 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ResultWidget extends StatelessWidget {
+  const ResultWidget({super.key, required String result}) : _result = result;
+
+  final String _result;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(height: 32),
+        SelectableText(_result, style: TextStyle(color: Colors.white)),
+      ],
     );
   }
 }
