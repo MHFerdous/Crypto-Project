@@ -122,9 +122,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 icon: Icon(_isEncrypt ? Icons.lock : Icons.lock_open),
                 label: Text(_isEncrypt ? 'Encrypt' : 'Decrypt'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                ),
               ),
               SizedBox(height: 32),
               Visibility(
@@ -149,7 +146,8 @@ class _HomeScreenState extends State<HomeScreen> {
       case 'Hill Cipher':
         return HillCipherWidget(
           selectedMatrixSize: _selectedMatrixSize,
-          matrixSizes: _matrixSizes, keyController: _keyController,
+          matrixSizes: _matrixSizes,
+          keyController: _keyController,
         );
 
       case 'Caesar Cipher':

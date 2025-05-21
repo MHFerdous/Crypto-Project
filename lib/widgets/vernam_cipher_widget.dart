@@ -22,13 +22,7 @@ class _VernamCipherWidgetState extends State<VernamCipherWidget> {
         return TextFormField(
           controller: widget.keyController,
           style: TextStyle(color: Colors.white),
-          decoration: InputDecoration(
-            labelText: 'Enter Key (Base64)',
-            labelStyle: TextStyle(color: Colors.white70),
-            border: OutlineInputBorder(),
-            filled: true,
-            fillColor: Color(0xFF2C2C3E),
-          ),
+          decoration: InputDecoration(labelText: 'Enter Key (Base64)'),
         );
       }
       return SizedBox.shrink();
