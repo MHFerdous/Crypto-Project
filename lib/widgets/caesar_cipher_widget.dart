@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CaesarCipherWidget extends StatefulWidget {
-  CaesarCipherWidget({super.key, required this.shift});
+   CaesarCipherWidget({super.key, required this.shift});
 
   late int shift;
 
