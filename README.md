@@ -13,14 +13,14 @@ Additionally, it incorporates user authentication (sign-up and login) powered by
 
 - **User Authentication**: Secure sign-up and login functionalities using Supabase.
 - **Multiple Cipher Techniques**:
-  - **Rail Fence Cipher**: Customize the number of rails for encryption/decryption.
+  - **Rail Fence Cipher**: Customise the number of rails for encryption/decryption.
   - **Hill Cipher**: Supports both 2x2 and 3x3 matrix sizes.
   - **Caesar Cipher**: Shift letters by a specified number.
   - **Vernam Cipher**: Implements the one-time pad encryption method.
 - **User-Friendly Interface**: Clean and intuitive UI for seamless user experience.
 - **Real-Time Results**: Instant encryption/decryption results are displayed upon input.
 
-## 🚀 Getting Started
+## 🚀 Run The App
 
 ### Prerequisites
 
