@@ -18,7 +18,7 @@ Additionally, it incorporates user authentication (sign-up and login) powered by
   - **Caesar Cipher**: Shift letters by a specified number.
   - **Vernam Cipher**: Implements the one-time pad encryption method.
 - **User-Friendly Interface**: Clean and intuitive UI for seamless user experience.
-- **Real-Time Results**: Instant encryption/decryption results displayed upon input.
+- **Real-Time Results**: Instant encryption/decryption results are displayed upon input.
 
 ## 🚀 Getting Started
 
@@ -29,9 +29,18 @@ Additionally, it incorporates user authentication (sign-up and login) powered by
 
 ### Installation
 
-1. **Clone the Repository**:
-
    ```bash
-   git clone https://github.com/yourusername/cipher_calculation_app.git
-   cd cipher_calculation_app
-  ```
+   git clone https://github.com/MHFerdous/Crypto-Project
+   cd Crypto-Project
+
+  ```bash
+   flutter pub get
+ 
+  ```bash
+   final supabaseUrl = 'https://your-supabase-url.supabase.co';
+   final supabaseAnonKey = 'your-anon-key';
+
+  ```bash
+   flutter run
+
+
