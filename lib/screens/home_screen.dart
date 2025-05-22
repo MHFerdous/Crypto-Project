@@ -4,6 +4,9 @@ import 'package:crypto_project/widgets/hill_cipher_widget.dart';
 import 'package:crypto_project/widgets/rail_fence_cipher_widget.dart';
 import 'package:crypto_project/widgets/vernam_cipher_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'auth/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,6 +46,60 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  Future<void> _logOut(BuildContext context) async {
+    final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Confirm Logout'),
+            content: const Text('Are you sure you want to log out?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('No'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder:
+                        (context) =>
+                            const Center(child: CircularProgressIndicator()),
+                  );
+
+                  await Future.delayed(const Duration(seconds: 2));
+
+                  try {
+                    Supabase.instance.client.auth.signOut();
+                    navigator.pop();
+                    scaffoldMessenger.showSnackBar(
+                      SnackBar(content: Text('Logged out...')),
+                    );
+                    navigator.pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => const LoginScreen(),
+                      ),
+                    );
+                  } catch (e) {
+                    navigator.pop();
+                    scaffoldMessenger.showSnackBar(
+                      SnackBar(content: Text('Error signing out: $e')),
+                    );
+                  }
+                },
+                child: const Text('Yes'),
+              ),
+            ],
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -54,6 +111,14 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: Text('🔐 Cipher Tools'),
           backgroundColor: Colors.black,
+          actions: [
+            IconButton(
+              onPressed: () {
+                _logOut(context);
+              },
+              icon: Icon(Icons.logout),
+            ),
+          ],
         ),
         backgroundColor: Color(0xFF121212),
         body: SingleChildScrollView(

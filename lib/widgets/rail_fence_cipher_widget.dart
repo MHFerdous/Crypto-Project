@@ -29,7 +29,7 @@ class _RailFenceCipherWidgetState extends State<RailFenceCipherWidget> {
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                if (widget.rails < 10) setState(() => widget.rails++);
+                if (widget.rails < 26) setState(() => widget.rails++);
               },
             ),
           ],

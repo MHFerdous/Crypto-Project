@@ -65,7 +65,7 @@ class _SignupScreenState extends State<SignupScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(
-                'Signup successful. Check you mail for verification.',
+                'Signup successful. Check you email for verification.',
               ),
             ),
           );
@@ -105,6 +105,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 32),
                 TextFormField(
                   controller: _emailController,
+                  textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
                     labelText: 'Email',
                     prefixIcon: Icon(Icons.email),
@@ -115,6 +116,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _passwordController,
+                  textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     prefixIcon: const Icon(Icons.lock),
