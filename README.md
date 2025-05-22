@@ -32,15 +32,18 @@ Additionally, it incorporates user authentication (sign-up and login) powered by
    ```bash
    git clone https://github.com/MHFerdous/Crypto-Project
    cd Crypto-Project
+   ```
 
-  ```bash
+   ```bash
    flutter pub get
+   ```
  
-  ```bash
+   ```bash
    final supabaseUrl = 'https://your-supabase-url.supabase.co';
    final supabaseAnonKey = 'your-anon-key';
+   ```
 
-  ```bash
+   ```bash
    flutter run
-
+   ```
 
