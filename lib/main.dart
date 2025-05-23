@@ -20,11 +20,6 @@ class CipherApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      /*theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Color(0xFF121218),
-        primaryColor: Colors.deepPurple,
-        textTheme: TextTheme(bodyMedium: TextStyle(color: Colors.white)),
-      ),*/
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
       theme: ThemeData(
@@ -45,7 +40,7 @@ class CipherApp extends StatelessWidget {
           labelStyle: TextStyle(color: Colors.white70),
           filled: true,
           fillColor: const Color(0xFF2C2C3E),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+          contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 24.0),
           border: const OutlineInputBorder(),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),

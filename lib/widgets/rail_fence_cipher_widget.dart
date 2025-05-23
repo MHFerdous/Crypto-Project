@@ -5,7 +5,6 @@ class RailFenceCipherWidget extends StatefulWidget {
 
   late int rails;
 
-
   @override
   State<RailFenceCipherWidget> createState() => _RailFenceCipherWidgetState();
 }
