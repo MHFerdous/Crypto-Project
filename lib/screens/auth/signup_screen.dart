@@ -41,7 +41,7 @@ class _SignupScreenState extends State<SignupScreen> {
     }
     final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
     if (!passwordRegex.hasMatch(value)) {
-      return 'Password must be at least 6 characters and contain both letters and numbers';
+      return 'Give at least 6 characters of both letters & numbers';
     }
     return null;
   }

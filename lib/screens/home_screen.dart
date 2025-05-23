@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   await Future.delayed(const Duration(seconds: 2));
 
                   try {
-                    Supabase.instance.client.auth.signOut();
+                    await Supabase.instance.client.auth.signOut();
                     navigator.pop();
                     scaffoldMessenger.showSnackBar(
                       SnackBar(content: Text('Logged out...')),
