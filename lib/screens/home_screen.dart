@@ -423,7 +423,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ? encryptRailFence(_inputController.text, _rails)
               : decryptRailFence(_inputController.text, _rails);
       setState(() {
-        _resultText = _isEncrypt ? output : 'Decrypted: $output';
+        _resultText = _isEncrypt ? output : output;
       });
     } catch (e) {
       setState(() {
@@ -450,7 +450,7 @@ class _HomeScreenState extends State<HomeScreen> {
               );
 
       setState(() {
-        _resultText = _isEncrypt ? 'Encrypted: $output' : 'Decrypted: $output';
+        _resultText = _isEncrypt ? output : output;
       });
     } catch (e) {
       setState(() {
@@ -468,7 +468,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ? caesarEncrypt(_inputController.text, _shift)
               : caesarDecrypt(_inputController.text, _shift);
       setState(() {
-        _resultText = _isEncrypt ? 'Encrypted: $output' : 'Decrypted: $output';
+        _resultText = _isEncrypt ? output : output;
       });
     } catch (e) {
       setState(() {
