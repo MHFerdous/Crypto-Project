@@ -25,7 +25,6 @@ class _HomeScreenState extends State<HomeScreen> {
     'Vernam Cipher',
   ];
 
-  final List<String> hillTypes = ['Classic Hill Cipher (A-Z only)'];
   final String _selectedMatrixSize = '2x2';
 
   final List<String> _matrixSizes = ['2x2', '3x3'];
@@ -123,10 +122,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         backgroundColor: Color(0xFF121212),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
+        body: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -298,7 +297,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         tooltip: 'Copy',
                                         onPressed: () {
                                           Clipboard.setData(
-                                            ClipboardData(text: _resultText),
+                                            ClipboardData(text: _resultKey),
                                           );
                                           ScaffoldMessenger.of(
                                             context,
