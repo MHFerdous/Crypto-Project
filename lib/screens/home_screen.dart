@@ -1,3 +1,4 @@
+import 'package:crypto_project/screens/about_developers_screen.dart';
 import 'package:crypto_project/widgets/caesar_cipher_widget.dart';
 import 'package:crypto_project/widgets/cipher_calculation.dart';
 import 'package:crypto_project/widgets/hill_cipher_widget.dart';
@@ -113,6 +114,15 @@ class _HomeScreenState extends State<HomeScreen> {
           title: Text('🔐 Cipher Tools'),
           backgroundColor: Colors.black,
           actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => AboutDevelopersScreen()),
+                );
+              },
+              child: Text('About Us'),
+            ),
             IconButton(
               onPressed: () {
                 _logOut(context);
