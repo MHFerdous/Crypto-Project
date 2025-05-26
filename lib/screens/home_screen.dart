@@ -111,18 +111,9 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         drawer: _buildDrawer(),
         appBar: AppBar(
-          title: Text('🔐 Cipher Tools'),
+          title: Text('Cipher Tools'),
           backgroundColor: Colors.black,
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => AboutDevelopersScreen()),
-                );
-              },
-              child: Text('About Us'),
-            ),
             IconButton(
               onPressed: () {
                 _logOut(context);
@@ -522,7 +513,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
           children: [
-            const SizedBox(height: 40),
+            const SizedBox(height: 48),
             Text(
               'Choose a Cipher',
               style: TextStyle(
@@ -548,10 +539,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             Divider(color: Colors.white24),
-            const SizedBox(height: 10),
-            Text(
-              'Made with ❤️ by\nFerdous, Nadim, Hasan & Sayem',
-              style: TextStyle(color: Colors.white60, fontSize: 12),
+            const SizedBox(height: 40),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => AboutDevelopersScreen()),
+                );
+              },
+              child: Text('About Us'),
             ),
           ],
         ),

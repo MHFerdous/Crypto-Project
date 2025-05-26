@@ -65,7 +65,7 @@ class _SignupScreenState extends State<SignupScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(
-                'Signup successful. Check you email for verification.',
+                'Signup successful !!',
               ),
             ),
           );
