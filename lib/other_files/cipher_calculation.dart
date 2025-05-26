@@ -195,16 +195,15 @@ String hillProcess(
   String keyText,
   String mode,
   int size,
-  String charset,
+  String alphabet,
 ) {
-  int modulus = charset.length;
-  if (charset == alphabet) {
-    text = text.toUpperCase();
-    keyText = keyText.toUpperCase();
-  }
-  text = text.split('').where((c) => charset.contains(c)).join();
+  int modulus = alphabet.length;
+  text = text.toUpperCase();
+  //keyText = keyText.toUpperCase();
+
+  text = text.split('').where((c) => alphabet.contains(c)).join();
   int n = size;
-  List<int> keyNums = textToNumbers(keyText, charset);
+  List<int> keyNums = textToNumbers(keyText, alphabet);
   if (keyNums.length != n * n) {
     throw Exception("Key must form a square matrix.");
   }
@@ -212,7 +211,7 @@ String hillProcess(
     return List.generate(n, (j) => keyNums[i * n + j]);
   });
   if (text.length % n != 0) {
-    text += charset[0] * (n - text.length % n);
+    text += alphabet[0] * (n - text.length % n);
   }
   List<String> chunks = [];
   for (int i = 0; i < text.length; i += n) {
@@ -223,7 +222,7 @@ String hillProcess(
     keyMatrix = matrixModInverse(keyMatrix, modulus);
   }
   for (String chunk in chunks) {
-    List<int> vec = textToNumbers(chunk, charset);
+    List<int> vec = textToNumbers(chunk, alphabet);
     List<int> res = List.filled(n, 0);
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < n; j++) {
@@ -231,10 +230,11 @@ String hillProcess(
       }
       res[i] %= modulus;
     }
-    result += numbersToText(res, charset);
+    result += numbersToText(res, alphabet);
   }
   return result;
 }
+
 String hillEncrypt(String plaintext, String keyText, int matrixSize) {
   return hillProcess(plaintext, keyText, 'encrypt', matrixSize, alphabet);
 }

@@ -12,6 +12,7 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
@@ -35,6 +36,13 @@ class _SignupScreenState extends State<SignupScreen> {
     return null;
   }
 
+  String? _validatePhoneNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your phone number';
+    }
+    return null;
+  }
+
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter your password';
@@ -53,22 +61,20 @@ class _SignupScreenState extends State<SignupScreen> {
 
     try {
       final email = _emailController.text.trim();
+      //final phone = _phoneNumberController.text.trim();
       final password = _passwordController.text.trim();
 
       final response = await Supabase.instance.client.auth.signUp(
         email: email,
+        //phone: phone,
         password: password,
       );
 
       if (response.user != null) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Signup successful !!',
-              ),
-            ),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Signup successful !!')));
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const LoginScreen()),
@@ -112,6 +118,17 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   keyboardType: TextInputType.emailAddress,
                   validator: _validateEmail,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _phoneNumberController,
+                  textInputAction: TextInputAction.next,
+                  decoration: const InputDecoration(
+                    labelText: 'Phone Number',
+                    prefixIcon: Icon(Icons.phone),
+                  ),
+                  keyboardType: TextInputType.number,
+                  validator: _validatePhoneNumber,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(

@@ -1,5 +1,5 @@
 import 'package:crypto_project/screens/auth/signup_screen.dart';
-import 'package:crypto_project/screens/home_screen.dart';
+import 'package:crypto_project/screens/rail_fence_cipher.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ).showSnackBar(const SnackBar(content: Text('Login successful')));
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const HomeScreen()),
+            MaterialPageRoute(builder: (_) => const RailFenceCipherScreen()),
           );
         }
       }
