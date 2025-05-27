@@ -199,7 +199,7 @@ String hillProcess(
 ) {
   int modulus = alphabet.length;
   text = text.toUpperCase();
-  //keyText = keyText.toUpperCase();
+  keyText = keyText.toUpperCase();
 
   text = text.split('').where((c) => alphabet.contains(c)).join();
   int n = size;
